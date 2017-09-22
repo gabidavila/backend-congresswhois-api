@@ -17,15 +17,17 @@ ActiveRecord::Schema.define(version: 20170922183415) do
 
   create_table "congress_members", force: :cascade do |t|
     t.integer "congress", default: 115, null: false
+    t.string "congress_type", default: "senate"
     t.string "first_name", null: false
     t.string "middle_name"
     t.string "last_name", null: false
     t.string "pp_member_id", null: false
     t.string "twitter_handle"
+    t.text "twitter_picture_url"
     t.string "party", null: false
     t.string "state", null: false
-    t.jsonb "general_response_api", null: false
-    t.jsonb "member_profile_response_api", null: false
+    t.jsonb "general_response_api", default: {}
+    t.jsonb "member_profile_response_api", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

@@ -1,3 +1,3 @@
 class CongressMember < ApplicationRecord
-
+  
 end

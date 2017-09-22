@@ -24,7 +24,7 @@ gem 'puma', '~> 3.7'
 gem 'dotenv-rails'
 gem 'rack-cors'
 gem 'active_model_serializers'
-gem 'active_rest_client'
+gem 'rest-client'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
