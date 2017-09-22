@@ -29,5 +29,13 @@ module BackendPropublicaApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+    config.propublica = {
+      :api_base_url => ENV.fetch("PROPUBLICA_MAIN_ENDPOINT"),
+      :api_key => ENV.fetch("PROPUBLICA_API"),
+      :congress => {
+        :current_house => ENV.fetch("PROPUBLICA_CURRENT_HOUSE"),
+        :current_senate => ENV.fetch("PROPUBLICA_CURRENT_SENATE")
+      }
+    }
   end
 end
