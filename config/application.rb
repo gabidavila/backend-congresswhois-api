@@ -35,6 +35,12 @@ module BackendPropublicaApi
       :congress => {
         :current_house => ENV.fetch("PROPUBLICA_CURRENT_HOUSE"),
         :current_senate => ENV.fetch("PROPUBLICA_CURRENT_SENATE")
+      },
+      :twitter => {
+        :consumer_key => ENV.fetch("TWITTER_CONSUMER_KEY"),
+        :consumer_secret => ENV.fetch("TWITTER_CONSUMER_SECRET"),
+        :access_token => ENV.fetch("TWITTER_ACCESS_TOKEN"),
+        :access_token_secret => ENV.fetch("TWITTER_ACCESS_TOKEN_SECRET")
       }
     }
   end
