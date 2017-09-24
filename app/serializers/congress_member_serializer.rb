@@ -1,6 +1,8 @@
 class CongressMemberSerializer < ActiveModel::Serializer
-  attributes :id, :congress_type, :congress, :first_name, :last_name, :phone, :state, :party, :pp_member_id,
+  attributes :id, :congress_type, :congress, :first_name, :last_name, :phone, :party, :pp_member_id,
              :twitter_handle, :twitter_picture_url, :facebook, :pp_api_uri, :full_name, :next_election, :party
+  belongs_to :state
+
 
   def response_api
     object.general_response_api
