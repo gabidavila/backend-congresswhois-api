@@ -2,7 +2,7 @@ class CreateCongressMembers < ActiveRecord::Migration[5.1]
   def change
     create_table :congress_members do |t|
       t.integer :congress, null: false, default: 115
-      t.string :congress_type, default: "senate"
+      t.string :congress_type, default: 'senate'
       t.string :first_name, null: false
       t.string :middle_name
       t.string :last_name, null: false
@@ -16,5 +16,9 @@ class CreateCongressMembers < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
+
+    add_index :congress_members, :state
+    add_index :congress_members, :party
+    add_index :congress_members, [:congress, :party]
   end
 end

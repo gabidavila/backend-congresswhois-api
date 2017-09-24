@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170923234348) do
+ActiveRecord::Schema.define(version: 20170924124655) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "cities", force: :cascade do |t|
+    t.string "city"
+    t.string "state"
+    t.string "state_full"
+    t.string "county"
+    t.string "city_alias"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "congress_members", force: :cascade do |t|
     t.integer "congress", default: 115, null: false
@@ -34,4 +44,35 @@ ActiveRecord::Schema.define(version: 20170923234348) do
     t.index ["full_name"], name: "index_congress_members_on_full_name"
   end
 
+  create_table "states", force: :cascade do |t|
+    t.string "state", limit: 2
+    t.string "state_full"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["state"], name: "index_states_on_state", unique: true
+    t.index ["state_full"], name: "index_states_on_state_full"
+  end
+
+  create_table "zipcodes", force: :cascade do |t|
+    t.string "zipcode", limit: 5
+    t.string "zipcode_type"
+    t.string "city"
+    t.string "state", limit: 2
+    t.string "location_type"
+    t.float "latitude"
+    t.float "longitude"
+    t.string "world_region"
+    t.string "country", limit: 2
+    t.string "location_text"
+    t.boolean "decomissioned", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["city"], name: "index_zipcodes_on_city"
+    t.index ["country"], name: "index_zipcodes_on_country"
+    t.index ["location_text"], name: "index_zipcodes_on_location_text"
+    t.index ["zipcode"], name: "index_zipcodes_on_zipcode"
+  end
+
+  add_foreign_key "cities", "states", column: "state", primary_key: "state"
+  add_foreign_key "zipcodes", "states", column: "state", primary_key: "state"
 end
