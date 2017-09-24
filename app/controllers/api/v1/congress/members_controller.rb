@@ -11,6 +11,11 @@ class Api::V1::Congress::MembersController < ApplicationController
     render json: fetch('house')
   end
 
+  def show
+    @member = CongressMember.find_by(id: params[:id])
+    render json: @member
+  end
+
   private
 
   def fetch(scope)
