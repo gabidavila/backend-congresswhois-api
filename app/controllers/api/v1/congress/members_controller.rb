@@ -19,7 +19,7 @@ class Api::V1::Congress::MembersController < ApplicationController
   private
 
   def fetch(scope)
-    limit = params[:limit] || 36
+    limit = params[:limit] || 12
 
     party = params[:party]
     party = %w{R D I} if !params[:party] || params[:party] == 'A'

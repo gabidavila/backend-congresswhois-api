@@ -1,24 +1,11 @@
-# README
+# Congress Index Backend
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Rails backend that connects to [ProPublica](https://www.propublica.org) API to filter members.
 
-Things you may want to cover:
+* `bundle install`
+* `rails db:create`
+* `rails db:migrate`
+* `rails import:run_all`
+* `rails s`
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+It can take a few minutes to import all the data.
