@@ -43,10 +43,10 @@ namespace :seed do
   task _03_add_full_name_to_congress_members: :environment do
     members = CongressMember.all
     members.each do |member|
-      full_name = '#{member.first_name} #{member.last_name}'
+      full_name = "#{member.first_name} #{member.last_name}"
 
       if member.middle_name
-        full_name = '#{member.first_name} #{member.middle_name} #{member.last_name}'
+        full_name = "#{member.first_name} #{member.middle_name} #{member.last_name}"
       end
 
       member.update(full_name: full_name)

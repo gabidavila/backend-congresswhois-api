@@ -17,7 +17,7 @@ class Api::V1::Congress::MembersController < ApplicationController
     limit = params[:limit] || 36
 
     party = params[:party]
-    party = '%w R D I' if !params[:party] || params[:party] == 'A'
+    party = %w{R D I} if !params[:party] || params[:party] == 'A'
 
     name ||= params[:name]
 
