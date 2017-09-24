@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+require 'csv'
 
 namespace :seed do
   desc 'Initial Import for the Senate'
@@ -43,10 +43,10 @@ namespace :seed do
   task add_full_name_to_congress_members: :environment do
     members = CongressMember.all
     members.each do |member|
-      full_name = "#{member.first_name} #{member.last_name}"
+      full_name = '#{member.first_name} #{member.last_name}'
 
       if member.middle_name
-        full_name = "#{member.first_name} #{member.middle_name} #{member.last_name}"
+        full_name = '#{member.first_name} #{member.middle_name} #{member.last_name}'
       end
 
       member.update(full_name: full_name)
@@ -76,5 +76,11 @@ namespace :seed do
 
   desc 'Import States'
   task import_us_states: :environment do
+    filename = File.join(Rails.root, 'db', 'import', 'us_states_and_territories.csv')
+    states   = []
+    CSV.foreach(filename, headers: true, header_converters: :symbol, col_sep: "\t") do |row|
+      states << { state: row[:state], state_full: row[:state_full] }
+    end
+    State.create(states)
   end
 end
