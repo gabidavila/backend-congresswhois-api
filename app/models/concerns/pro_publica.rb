@@ -14,9 +14,9 @@ module ProPublica
       end
 
       def self.members
-        url = "#{Congress.base_url}/#{self.current}/senate/members.json"
-        response = RestClient::Request.execute(method: :get, url: url, headers: {"X-API-Key": Congress.key})
-        JSON.parse(response.body)["results"].first["members"]
+        url      = "#{Congress.base_url}/#{current}/senate/members.json"
+        response = RestClient::Request.execute(method: :get, url: url, headers: { "X-API-Key": Congress.key })
+        JSON.parse(response.body)['results'].first['members']
       end
     end
 
@@ -26,9 +26,13 @@ module ProPublica
       end
 
       def self.members
-        url = "#{Congress.base_url}/#{self.current}/house/members.json"
-        response = RestClient::Request.execute(method: :get, url: url, headers: {"X-API-Key": Congress.key})
-        JSON.parse(response.body)["results"].first["members"]
+        url          = "#{Congress.base_url}/#{current}/house/members.json"
+        rest_options = {
+          method:  :get, url: url,
+          headers: { "X-API-Key": Congress.key }
+        }
+        response = RestClient::Request.execute(rest_options)
+        JSON.parse(response.body)['results'].first['members']
       end
     end
   end
