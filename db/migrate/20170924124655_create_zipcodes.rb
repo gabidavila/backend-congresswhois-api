@@ -11,7 +11,6 @@ class CreateZipcodes < ActiveRecord::Migration[5.1]
       t.string :world_region
       t.string :country, limit: 2
       t.string :location_text
-      t.boolean :decomissioned, null: false, default: false
 
       t.timestamps
     end

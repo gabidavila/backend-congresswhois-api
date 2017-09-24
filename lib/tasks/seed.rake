@@ -2,7 +2,7 @@ require 'csv'
 
 namespace :seed do
   desc 'Initial Import for the Senate'
-  task initial_import_members_senate: :environment do
+  task _01_initial_import_members_senate: :environment do
     members        = ProPublica::Congress::Senate.members
     mapped_members = members.map do |member|
       {
@@ -21,7 +21,7 @@ namespace :seed do
   end
 
   desc 'Initial Import for the House'
-  task initial_import_members_house: :environment do
+  task _02_initial_import_members_house: :environment do
     members        = ProPublica::Congress::House.members
     mapped_members = members.map do |member|
       {
@@ -40,7 +40,7 @@ namespace :seed do
   end
 
   desc 'Add full_name to congressmen'
-  task add_full_name_to_congress_members: :environment do
+  task _03_add_full_name_to_congress_members: :environment do
     members = CongressMember.all
     members.each do |member|
       full_name = '#{member.first_name} #{member.last_name}'
@@ -54,7 +54,7 @@ namespace :seed do
   end
 
   desc 'Twitter Image Import'
-  task twitter_image_profile_congressman: :environment do
+  task _04_twitter_image_profile_congressman: :environment do
     congressmen       = CongressMember.where.not(twitter_handle: nil).where(twitter_picture_url: nil)
     propublica_config = Rails.application.config.propublica
     client            = Twitter::REST::Client.new do |config|
@@ -75,12 +75,50 @@ namespace :seed do
   end
 
   desc 'Import States'
-  task import_us_states: :environment do
+  task _05_import_us_states: :environment do
     filename = File.join(Rails.root, 'db', 'import', 'us_states_and_territories.csv')
     states   = []
     CSV.foreach(filename, headers: true, header_converters: :symbol, col_sep: "\t") do |row|
       states << { state: row[:state], state_full: row[:state_full] }
     end
     State.create(states)
+  end
+
+  desc 'Import Cities'
+  task _06_import_us_cities: :environment do
+    filename = File.join(Rails.root, 'db', 'import', 'us_cities_states_counties.csv')
+    cities   = []
+    CSV.foreach(filename, headers: true, header_converters: :symbol, col_sep: '|') do |row|
+      city = {
+        city:       row[:city],
+        state:      row[:state_short],
+        county:     row[:county],
+        city_alias: row[:city_alias]
+      }
+      cities << city
+    end
+    City.create(cities)
+  end
+
+  desc 'Import Zipcodes'
+  task _07_import_us_zipcodes: :environment do
+    filename = File.join(Rails.root, 'db', 'import', 'us_zipcodes_data.csv')
+    zipcodes = []
+    CSV.foreach(filename, headers: true, header_converters: :symbol) do |row|
+      zipcode = {
+        zipcode:       row[:zipcode],
+        zipcode_type:  row[:zipcodetype],
+        city:          row[:city],
+        state:         row[:state],
+        location_type: row[:locationtype],
+        latitude:      row[:lat],
+        longitude:     row[:long],
+        world_region:  row[:worldregion],
+        country:       row[:country],
+        location_text: row[:locationtext]
+      }
+      zipcodes << zipcode
+    end
+    Zipcode.create(zipcodes)
   end
 end

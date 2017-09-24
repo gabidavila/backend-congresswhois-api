@@ -18,7 +18,6 @@ ActiveRecord::Schema.define(version: 20170924124655) do
   create_table "cities", force: :cascade do |t|
     t.string "city"
     t.string "state"
-    t.string "state_full"
     t.string "county"
     t.string "city_alias"
     t.datetime "created_at", null: false
@@ -41,7 +40,10 @@ ActiveRecord::Schema.define(version: 20170924124655) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "full_name"
+    t.index ["congress", "party"], name: "index_congress_members_on_congress_and_party"
     t.index ["full_name"], name: "index_congress_members_on_full_name"
+    t.index ["party"], name: "index_congress_members_on_party"
+    t.index ["state"], name: "index_congress_members_on_state"
   end
 
   create_table "states", force: :cascade do |t|
@@ -64,7 +66,6 @@ ActiveRecord::Schema.define(version: 20170924124655) do
     t.string "world_region"
     t.string "country", limit: 2
     t.string "location_text"
-    t.boolean "decomissioned", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["city"], name: "index_zipcodes_on_city"
