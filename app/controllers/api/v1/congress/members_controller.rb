@@ -21,7 +21,16 @@ class Api::V1::Congress::MembersController < ApplicationController
 
     name ||= params[:name]
 
-    @congress = CongressMember.where(party: party).where('full_name ILIKE :name', name: "%#{name}%")
+    state ||= params[:state]
+
+    if state == 'A'
+      state = nil
+    end
+
+    @congress = CongressMember.includes(:state)
+                  .where(party: party)
+                  .where('state LIKE :state', state: "%#{state}%")
+                  .where('full_name ILIKE :name', name: "%#{name}%")
                   .send(scope).limit(limit)
   end
 end
