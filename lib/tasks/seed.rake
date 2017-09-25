@@ -42,7 +42,7 @@ namespace :seed do
         pp_member_id:         member['id'],
         twitter_handle:       member['twitter_account'],
         party:                member['party'],
-        state:                member['state'],
+        state:                State.find_by(state: member['state']),
         general_response_api: member
       }
     end
