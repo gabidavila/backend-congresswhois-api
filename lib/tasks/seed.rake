@@ -91,7 +91,7 @@ namespace :seed do
     CSV.foreach(filename, headers: true, header_converters: :symbol, col_sep: '|') do |row|
       city = {
         city:       row[:city],
-        state:      row[:state_short],
+        state:      State.find_by(state: row['state_short']),
         county:     row[:county],
         city_alias: row[:city_alias]
       }
@@ -109,7 +109,7 @@ namespace :seed do
         zipcode:       row[:zipcode],
         zipcode_type:  row[:zipcodetype],
         city:          row[:city],
-        state:         row[:state],
+        state:         State.find_by(state: row['state']),
         location_type: row[:locationtype],
         latitude:      row[:lat],
         longitude:     row[:long],
