@@ -1,5 +1,10 @@
 require 'csv'
 
+def get_states
+  all = State.all
+  all.map{|state| [state.state , state]}.to_h
+end
+
 namespace :seed do
   desc 'Import States'
   task _01_import_us_states: :environment do
@@ -86,12 +91,14 @@ namespace :seed do
 
   desc 'Import Cities'
   task _06_import_us_cities: :environment do
+    states = get_states
     filename = File.join(Rails.root, 'db', 'import', 'us_cities_states_counties.csv')
     cities   = []
+
     CSV.foreach(filename, headers: true, header_converters: :symbol, col_sep: '|') do |row|
       city = {
         city:       row[:city],
-        state:      State.find_by(state: row['state_short']),
+        state:      states[row[:state_short]],
         county:     row[:county],
         city_alias: row[:city_alias]
       }
@@ -102,6 +109,7 @@ namespace :seed do
 
   desc 'Import Zipcodes'
   task _07_import_us_zipcodes: :environment do
+    states = get_states
     filename = File.join(Rails.root, 'db', 'import', 'us_zipcodes_data.csv')
     zipcodes = []
     CSV.foreach(filename, headers: true, header_converters: :symbol) do |row|
@@ -109,7 +117,7 @@ namespace :seed do
         zipcode:       row[:zipcode],
         zipcode_type:  row[:zipcodetype],
         city:          row[:city],
-        state:         State.find_by(state: row['state']),
+        state:         states[row[:state]],
         location_type: row[:locationtype],
         latitude:      row[:lat],
         longitude:     row[:long],
