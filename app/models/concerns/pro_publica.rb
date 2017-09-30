@@ -8,6 +8,20 @@ module ProPublica
       Rails.application.config.propublica[:api_key]
     end
 
+    class Member
+      def self.fetch(id)
+        member   = CongressMember.find_by(id: id)
+        url      = member.general_response_api["api_uri"]
+        rest_options = {
+          method:  :get,
+          url:     url,
+          headers: { "X-API-Key": Congress.key }
+        }
+        response = RestClient::Request.execute(rest_options)
+        JSON.parse(response.body)
+      end
+    end
+
     class Senate
       def self.current
         Rails.application.config.propublica[:congress][:current_senate]
@@ -28,10 +42,11 @@ module ProPublica
       def self.members
         url          = "#{Congress.base_url}/#{current}/house/members.json"
         rest_options = {
-          method:  :get, url: url,
+          method:  :get,
+          url:     url,
           headers: { "X-API-Key": Congress.key }
         }
-        response = RestClient::Request.execute(rest_options)
+        response     = RestClient::Request.execute(rest_options)
         JSON.parse(response.body)['results'].first['members']
       end
     end

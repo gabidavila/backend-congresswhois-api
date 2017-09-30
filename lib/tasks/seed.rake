@@ -2,7 +2,7 @@ require 'csv'
 
 def get_states
   all = State.all
-  all.map{|state| [state.state , state]}.to_h
+  all.map { |state| [state.state, state] }.to_h
 end
 
 namespace :seed do
@@ -91,7 +91,7 @@ namespace :seed do
 
   desc 'Import Cities'
   task _06_import_us_cities: :environment do
-    states = get_states
+    states   = get_states
     filename = File.join(Rails.root, 'db', 'import', 'us_cities_states_counties.csv')
     cities   = []
 
@@ -109,7 +109,7 @@ namespace :seed do
 
   desc 'Import Zipcodes'
   task _07_import_us_zipcodes: :environment do
-    states = get_states
+    states   = get_states
     filename = File.join(Rails.root, 'db', 'import', 'us_zipcodes_data.csv')
     zipcodes = []
     CSV.foreach(filename, headers: true, header_converters: :symbol) do |row|
@@ -128,5 +128,16 @@ namespace :seed do
       zipcodes << zipcode
     end
     Zipcode.create(zipcodes)
+  end
+
+  desc 'Import Members Profiles'
+  task _08_import_members_profiles: :environment do
+    members = CongressMember.all
+    members.each do |member|
+      member_response_api = ProPublica::Congress::Member.fetch(member.id)
+      member.member_profile_response_api = member_response_api['results'].first
+      member.save
+      binding.pry
+    end
   end
 end
