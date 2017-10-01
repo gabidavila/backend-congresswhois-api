@@ -137,7 +137,6 @@ namespace :seed do
       member_response_api = ProPublica::Congress::Member.fetch(member.id)
       member.member_profile_response_api = member_response_api['results'].first
       member.save
-      binding.pry
     end
   end
 end
