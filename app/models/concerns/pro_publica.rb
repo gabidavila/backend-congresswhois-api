@@ -10,15 +10,28 @@ module ProPublica
 
     class Member
       def self.fetch(id)
-        member   = CongressMember.find_by(id: id)
-        url      = member.general_response_api["api_uri"]
+        member       = CongressMember.find_by(id: id)
+        url          = member.general_response_api["api_uri"]
         rest_options = {
           method:  :get,
           url:     url,
           headers: { "X-API-Key": Congress.key }
         }
-        response = RestClient::Request.execute(rest_options)
+        response     = RestClient::Request.execute(rest_options)
         JSON.parse(response.body)
+      end
+    end
+
+    class Parties
+      def self.state_representation
+        url          = "#{Congress.base_url}/states/members/party.json"
+        rest_options = {
+          method:  :get,
+          url:     url,
+          headers: { "X-API-Key": Congress.key }
+        }
+        response     = RestClient::Request.execute(rest_options)
+        JSON.parse(response.body)['results']
       end
     end
 

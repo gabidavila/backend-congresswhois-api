@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       namespace :congress do
+        get '/parties/representation', to: 'parties#representation'
         get '/states', to: 'states#index'
         get '/states/:id', to: 'states#show'
         get '/members/senate', to: 'members#senate'
