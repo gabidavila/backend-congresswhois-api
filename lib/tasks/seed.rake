@@ -9,7 +9,7 @@ namespace :seed do
   desc 'Import States'
   task _01_import_us_states: :environment do
     puts '---- Importing States'
-    
+
     filename = File.join(Rails.root, 'db', 'import', 'us_states_and_territories.csv')
     states   = []
     CSV.foreach(filename, headers: true, header_converters: :symbol, col_sep: "\t") do |row|
@@ -112,6 +112,7 @@ namespace :seed do
 
     states   = get_states
     filename = File.join(Rails.root, 'db', 'import', 'us_cities_states_counties.csv')
+    cities = []
 
     CSV.foreach(filename, headers: true, header_converters: :symbol, col_sep: '|') do |row|
       city = {
@@ -121,7 +122,6 @@ namespace :seed do
         city_alias: row[:city_alias]
       }
       puts "Importing: #{city}"
-      City.create(city)
     end
     City.create(cities)
     puts "Cities Imported"
@@ -133,6 +133,7 @@ namespace :seed do
 
     states   = get_states
     filename = File.join(Rails.root, 'db', 'import', 'us_zipcodes_data.csv')
+    zipcodes = []
 
     CSV.foreach(filename, headers: true, header_converters: :symbol) do |row|
       zipcode = {
@@ -149,8 +150,9 @@ namespace :seed do
       }
 
       puts "Importing #{zipcode}"
-      Zipcode.create(zipcode)
+      zipcodes << zipcode
     end
+    Zipcode.create(zipcodes)
     puts 'Imported zipcodes'
   end
 
