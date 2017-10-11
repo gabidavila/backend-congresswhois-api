@@ -47,8 +47,8 @@ ActiveRecord::Schema.define(version: 20170924124655) do
   end
 
   create_table "states", force: :cascade do |t|
-    t.string "state", limit: 2
-    t.string "state_full"
+    t.string "state", limit: 2, null: false
+    t.string "state_full", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["state"], name: "index_states_on_state", unique: true
@@ -75,5 +75,6 @@ ActiveRecord::Schema.define(version: 20170924124655) do
   end
 
   add_foreign_key "cities", "states", column: "state", primary_key: "state"
+  add_foreign_key "congress_members", "states", column: "state", primary_key: "state"
   add_foreign_key "zipcodes", "states", column: "state", primary_key: "state"
 end

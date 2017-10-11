@@ -20,5 +20,6 @@ class CreateCongressMembers < ActiveRecord::Migration[5.1]
     add_index :congress_members, :state
     add_index :congress_members, :party
     add_index :congress_members, [:congress, :party]
+    add_foreign_key :congress_members, :states, column: :state, primary_key: :state
   end
 end

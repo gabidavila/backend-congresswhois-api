@@ -1,8 +1,8 @@
 class CreateStates < ActiveRecord::Migration[5.1]
   def change
     create_table :states do |t|
-      t.string :state, limit: 2
-      t.string :state_full
+      t.string :state, limit: 2, null: false
+      t.string :state_full, null: false
 
       t.timestamps
     end
