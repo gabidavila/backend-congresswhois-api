@@ -1,7 +1,6 @@
 class CongressMemberSerializer < ActiveModel::Serializer
   attributes :id, :congress_type, :congress, :first_name, :last_name, :phone, :party, :pp_member_id,
-             :twitter_handle, :twitter_picture_url, :facebook, :pp_api_uri, :full_name, :next_election, :party, :propublica_profile, :career
-  belongs_to :state
+             :twitter_handle, :twitter_picture_url, :facebook, :pp_api_uri, :full_name, :next_election, :party, :propublica_profile, :career, :state
 
   def propublica_profile
     object.general_response_api
@@ -25,5 +24,12 @@ class CongressMemberSerializer < ActiveModel::Serializer
 
   def next_election
     propublica_profile['next_election']
+  end
+
+  def state
+    {
+      state: object.state.state,
+      state_full: object.state.state_full
+    }
   end
 end

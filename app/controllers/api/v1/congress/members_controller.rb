@@ -1,6 +1,7 @@
 class Api::V1::Congress::MembersController < ApplicationController
   def index
-    render json: fetch
+    fetch
+    render json: @congress, meta: pagination_dict(@congress)
   end
 
   def senate
@@ -12,15 +13,14 @@ class Api::V1::Congress::MembersController < ApplicationController
   end
 
   def show
-    @member = CongressMember.find_by(id: params[:id])
+    @member = CongressMember.find_by(pp_member_id: params[:id])
     render json: @member
   end
 
   private
 
   def fetch(scope = 'order_name')
-    limit = params[:limit] || 12
-
+    page = params[:page][:number] || 1 if params[:page]
     party = params[:party]
     party = %w{R D I} if !params[:party] || params[:party] == 'A'
 
@@ -32,10 +32,9 @@ class Api::V1::Congress::MembersController < ApplicationController
       state = nil
     end
 
-    @congress = CongressMember.includes(:state)
-                  .where(party: party)
+    @congress = CongressMember.includes(:state).where(party: party)
                   .where('state LIKE :state', state: "%#{state}%")
                   .where('full_name ILIKE :name', name: "%#{name}%")
-                  .send(scope).limit(limit)
+                  .send(scope).page(page)
   end
 end
