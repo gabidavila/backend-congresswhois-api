@@ -20,7 +20,7 @@ class Api::V1::Congress::MembersController < ApplicationController
   private
 
   def fetch(scope = 'order_name')
-    page = params[:page][:number] || 1 if params[:page]
+    page = params[:page] || 1 if params[:page]
     party = params[:party]
     party = %w{R D I} if !params[:party] || params[:party] == 'A'
 
