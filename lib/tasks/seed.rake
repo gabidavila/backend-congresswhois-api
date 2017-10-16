@@ -112,7 +112,7 @@ namespace :seed do
 
     states   = get_states
     filename = File.join(Rails.root, 'db', 'import', 'us_cities_states_counties.csv')
-    cities = []
+    cities   = []
 
     CSV.foreach(filename, headers: true, header_converters: :symbol, col_sep: '|') do |row|
       city = {
@@ -163,10 +163,35 @@ namespace :seed do
     members.each do |member|
       puts "Importing #{member[:full_name]}"
 
-      member_response_api = ProPublica::Congress::Member.fetch(member.id)
+      member_response_api                = ProPublica::Congress::Member.fetch(member.id)
       member.member_profile_response_api = member_response_api['results'].first
       member.save
     end
     puts 'Imported Members API Response'
+  end
+
+  desc 'Import Districts'
+  task _09_import_districts: :environment do
+    puts '---- Importing Districts'
+    filename = File.join(Rails.root, 'db', 'import', 'zipcodes_list.csv')
+    states   = get_states
+    CSV.foreach(filename, headers: true, header_converters: :symbol) do |row|
+      zipcode_district = {
+
+        state:    states[row[:state_abbr]],
+        zipcode:  row[:zip],
+        district: row[:cd]
+      }
+      ZipcodesDistrict.create(zipcode_district)
+    end
+  end
+
+  desc 'Update House Members District'
+  task _10_update_district_house: :environment do
+    puts '---- Adding Districts to House Members'
+
+    CongressMember.house.map do |member|
+      member.update(district: member['general_response_api']['district'])
+    end
   end
 end

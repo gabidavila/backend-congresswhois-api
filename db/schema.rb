@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170924124655) do
+ActiveRecord::Schema.define(version: 20171016195236) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,7 +40,9 @@ ActiveRecord::Schema.define(version: 20170924124655) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "full_name"
+    t.string "district"
     t.index ["congress", "party"], name: "index_congress_members_on_congress_and_party"
+    t.index ["district"], name: "index_congress_members_on_district"
     t.index ["full_name"], name: "index_congress_members_on_full_name"
     t.index ["party"], name: "index_congress_members_on_party"
     t.index ["state"], name: "index_congress_members_on_state"
@@ -74,7 +76,18 @@ ActiveRecord::Schema.define(version: 20170924124655) do
     t.index ["zipcode"], name: "index_zipcodes_on_zipcode"
   end
 
+  create_table "zipcodes_districts", force: :cascade do |t|
+    t.string "state", limit: 2, null: false
+    t.string "zipcode", limit: 5, null: false
+    t.string "district", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["state"], name: "index_zipcodes_districts_on_state"
+    t.index ["zipcode"], name: "index_zipcodes_districts_on_zipcode"
+  end
+
   add_foreign_key "cities", "states", column: "state", primary_key: "state"
   add_foreign_key "congress_members", "states", column: "state", primary_key: "state"
   add_foreign_key "zipcodes", "states", column: "state", primary_key: "state"
+  add_foreign_key "zipcodes_districts", "states", column: "state", primary_key: "state"
 end
