@@ -27,6 +27,7 @@ gem 'active_model_serializers'
 gem 'rest-client'
 gem 'twitter'
 gem 'kaminari'
+gem 'twilio-ruby'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

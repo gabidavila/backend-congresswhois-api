@@ -12,4 +12,6 @@ Rails.application.routes.draw do
       end
     end
   end
+  post '/twilio/voice', to: 'twilio#voice'
+  get '/twilio/token', to: 'twilio#token'
 end
