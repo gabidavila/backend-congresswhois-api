@@ -28,7 +28,7 @@ class CongressMemberSerializer < ActiveModel::Serializer
 
   def state
     {
-      state: object.state.state,
+      state:      object.state.state,
       state_full: object.state.state_full
     }
   end

@@ -10,6 +10,9 @@ Rails.application.routes.draw do
         get '/members/:id', to: 'members#show'
         get '/members', to: 'members#index'
       end
+      namespace :zipcodes do
+        get '/districts/search', to: 'districts#search'
+      end
     end
   end
   post '/twilio/voice', to: 'twilio#voice'
