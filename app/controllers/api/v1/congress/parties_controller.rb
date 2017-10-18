@@ -6,7 +6,7 @@ class Api::V1::Congress::PartiesController < ApplicationController
         state == state_parties.keys.first
       end
       sorted  = parties[state].sort_by do |object|
-        object.values.first
+        object.values.first.to_i
       end if parties
       { name: state, main_party: sorted.last.keys.first, party_count: sorted } if parties
     end.compact

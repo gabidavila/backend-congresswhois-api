@@ -6,5 +6,5 @@ class CongressMember < ApplicationRecord
   scope :order_name, -> { order(:last_name).order(:first_name) }
   scope :senate, -> { where(congress_type: :senate).order_name }
   scope :house, -> { where(congress_type: :house).order_name }
-  scope :zipcodes, -> { joins('INNER JOIN zipcodes_districts ON zipcodes_districts.state = congress_members.state AND zipcodes_districts.district = congress_members.district') }
+  scope :zipcodes, -> { joins("INNER JOIN zipcodes_districts ON (zipcodes_districts.state = congress_members.state AND zipcodes_districts.district = congress_members.district) OR (zipcodes_districts.state = congress_members.state AND congress_members.congress_type = 'senate')") }
 end
