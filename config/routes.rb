@@ -9,6 +9,7 @@ Rails.application.routes.draw do
         get '/members/house', to: 'members#house'
         get '/members/:id', to: 'members#show'
         get '/members', to: 'members#index'
+        post '/compare', to: 'comparisons#compare'
       end
       namespace :zipcodes do
         get '/districts/search', to: 'districts#search'

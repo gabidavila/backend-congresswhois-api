@@ -4,63 +4,57 @@ module ProPublica
       Rails.application.config.propublica[:api_base_url]
     end
 
-    def self.key
-      Rails.application.config.propublica[:api_key]
+    def self.current
+      Rails.application.config.propublica[:congress][:current_senate]
+    end
+
+    def self.fetch(url)
+      rest_options = {
+        method:  :get,
+        url:     url,
+        headers: { "X-API-Key": Rails.application.config.propublica[:api_key] }
+      }
+      JSON.parse(RestClient::Request.execute(rest_options).body)
     end
 
     class Member
       def self.fetch(id)
-        member       = CongressMember.find_by(id: id)
-        url          = member.general_response_api["api_uri"]
-        rest_options = {
-          method:  :get,
-          url:     url,
-          headers: { "X-API-Key": Congress.key }
-        }
-        response     = RestClient::Request.execute(rest_options)
-        JSON.parse(response.body)
+        member = CongressMember.find_by(id: id)
+        url    = member.general_response_api["api_uri"]
+        Congress.fetch(url)
       end
     end
 
     class Parties
       def self.state_representation
-        url          = "#{Congress.base_url}/states/members/party.json"
-        rest_options = {
-          method:  :get,
-          url:     url,
-          headers: { "X-API-Key": Congress.key }
-        }
-        response     = RestClient::Request.execute(rest_options)
-        JSON.parse(response.body)['results']
+        url = "#{Congress.base_url}/states/members/party.json"
+        Congress.fetch(url)['results']
       end
     end
 
     class Senate
-      def self.current
-        Rails.application.config.propublica[:congress][:current_senate]
-      end
-
       def self.members
-        url      = "#{Congress.base_url}/#{current}/senate/members.json"
-        response = RestClient::Request.execute(method: :get, url: url, headers: { "X-API-Key": Congress.key })
-        JSON.parse(response.body)['results'].first['members']
+        url = "#{Congress.base_url}/#{Congress.current}/senate/members.json"
+        Congress.fetch(url)['results'].first['members']
       end
     end
 
     class House
-      def self.current
-        Rails.application.config.propublica[:congress][:current_house]
+      def self.members
+        url = "#{Congress.base_url}/#{Congress.current}/house/members.json"
+        Congress.fetch(url)['results'].first['members']
+      end
+    end
+
+    class Comparisons
+      def self.votes(request)
+        url = "#{Congress.base_url}/members/#{request[:member_id1]}/votes/#{request[:member_id2]}/#{request[:congress]}/#{request[:chamber]}.json"
+        Congress.fetch(url)['results'].first
       end
 
-      def self.members
-        url          = "#{Congress.base_url}/#{current}/house/members.json"
-        rest_options = {
-          method:  :get,
-          url:     url,
-          headers: { "X-API-Key": Congress.key }
-        }
-        response     = RestClient::Request.execute(rest_options)
-        JSON.parse(response.body)['results'].first['members']
+      def self.bills(request)
+        url = "#{Congress.base_url}/members/#{request[:member_id1]}/bills/#{request[:member_id2]}/#{request[:congress]}/#{request[:chamber]}.json"
+        Congress.fetch(url)['results'].first
       end
     end
   end
