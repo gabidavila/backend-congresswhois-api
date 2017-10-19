@@ -10,6 +10,8 @@ namespace :seed do
   task _01_import_us_states: :environment do
     puts '---- Importing States'
 
+    next if State.count != 0
+
     filename = File.join(Rails.root, 'db', 'import', 'us_states_and_territories.csv')
     states   = []
     CSV.foreach(filename, headers: true, header_converters: :symbol, col_sep: "\t") do |row|
@@ -22,10 +24,10 @@ namespace :seed do
   desc 'Initial Import for the Senate'
   task _02_initial_import_members_senate: :environment do
     puts '---- Importing Members from Senate'
-
-    members        = ProPublica::Congress::Senate.members
-    mapped_members = members.map do |member|
-      {
+    states = get_states
+    members = ProPublica::Congress::Senate.members
+    imported = members.map do |member|
+      data = {
         congress_type:        'senate',
         first_name:           member['first_name'],
         middle_name:          member['middle_name'],
@@ -33,21 +35,27 @@ namespace :seed do
         pp_member_id:         member['id'],
         twitter_handle:       member['twitter_account'],
         party:                member['party'],
-        state:                State.find_by(state: member['state']),
+        state:                states[member['state']],
         general_response_api: member
       }
+
+      CongressMember.find_or_create_by(pp_member_id: member['id']) do |member|
+        member.update_attributes(data)
+      end
     end
-    CongressMember.create(mapped_members)
+
+    # Deletes inactive senators
+    CongressMember.where.not(pp_member_id: imported.pluck(:pp_member_id)).where(congress_type: 'senate').destroy_all
     puts 'Imported Members from Senate'
   end
 
   desc 'Initial Import for the House'
   task _03_initial_import_members_house: :environment do
     puts '---- Importing Members from House'
-
-    members        = ProPublica::Congress::House.members
-    mapped_members = members.map do |member|
-      {
+    states = get_states
+    members = ProPublica::Congress::House.members
+    imported = members.map do |member|
+      data = {
         congress_type:        'house',
         first_name:           member['first_name'],
         middle_name:          member['middle_name'],
@@ -55,11 +63,17 @@ namespace :seed do
         pp_member_id:         member['id'],
         twitter_handle:       member['twitter_account'],
         party:                member['party'],
-        state:                State.find_by(state: member['state']),
+        state:                states[member['state']],
         general_response_api: member
       }
+
+      CongressMember.find_or_create_by(pp_member_id: member['id']) do |member|
+        member.update_attributes(data)
+      end
     end
-    CongressMember.create(mapped_members)
+
+    # Deletes inactive representatives
+    CongressMember.where.not(pp_member_id: imported.pluck(:pp_member_id)).where(congress_type: 'house').destroy_all
     puts 'Imported Members from House'
   end
 
@@ -112,7 +126,9 @@ namespace :seed do
 
     states   = get_states
     filename = File.join(Rails.root, 'db', 'import', 'us_cities_states_counties.csv')
-    cities   = []
+    # cities   = []
+    # binding.pry
+    next 'Already Imported' if City.count != 0
 
     CSV.foreach(filename, headers: true, header_converters: :symbol, col_sep: '|') do |row|
       city = {
@@ -121,10 +137,10 @@ namespace :seed do
         county:     row[:county],
         city_alias: row[:city_alias]
       }
-      puts "Importing: #{city}"
+      City.create(city)
     end
-    City.create(cities)
-    puts "Cities Imported"
+    # City.create(cities)
+    puts 'Cities Imported'
   end
 
   desc 'Import Zipcodes'
