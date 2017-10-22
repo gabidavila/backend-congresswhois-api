@@ -1,9 +1,14 @@
 class TwilioController < ApplicationController
   def voice
     twiml = Twilio::TwiML::VoiceResponse.new do |r|
+      congress_member = CongressMember.where("general_response_api ->> 'phone' =  ?", params['To'])
+      return r.say("Invalid Call") if congress_member.empty?
+
+      congress_member = congress_member.first
       r.say("Calling #{params['Member']} from the #{params['Chamber']}, please wait.", voice: 'woman', language: 'en')
-      if params['To'] and params['To'] != ''
-        number = params['To']
+
+      if congress_member.general_response_api['phone'] != ''
+        number = congress_member.general_response_api['phone']
         r.dial(caller_id: ENV['TWILIO_CALLER_ID']) do |d|
           if number =~ /^[\d\+\-\(\) ]+$/
             d.number(number)
