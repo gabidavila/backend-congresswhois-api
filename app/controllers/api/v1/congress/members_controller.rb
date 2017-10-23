@@ -1,7 +1,12 @@
 class Api::V1::Congress::MembersController < ApplicationController
   def index
     fetch
-    render json: @congress, meta: pagination_dict(@congress)
+
+    if params[:paginated] != 'false'
+      render json: @congress, meta: pagination_dict(@congress)
+    else
+      render json: @congress
+    end
   end
 
   def senate
@@ -20,13 +25,13 @@ class Api::V1::Congress::MembersController < ApplicationController
   private
 
   def fetch(scope = 'order_name')
-    page = params[:page] || 1 if params[:page]
+    page = params[:page] || 1
     page = page['number'] if !page.class != String
 
     party = params[:party]
     party = %w{R D I} if !params[:party] || params[:party] == 'A'
 
-    name ||= params[:name]
+    name  ||= params[:name]
     state ||= params[:state]
     scope = params[:congress] if params[:congress] && params[:congress] != ''
 
@@ -34,9 +39,16 @@ class Api::V1::Congress::MembersController < ApplicationController
       state = nil
     end
 
-    @congress = CongressMember.includes(:state).where(party: party)
-                  .where('state LIKE :state', state: "%#{state}%")
-                  .where('full_name ILIKE :name', name: "%#{name}%")
-                  .send(scope).page(page)
+    if params[:paginated] == 'false'
+      @congress = CongressMember.includes(:state).where(party: party)
+                    .where('state LIKE :state', state: "%#{state}%")
+                    .where('full_name ILIKE :name', name: "%#{name}%")
+                    .send(scope)
+    else
+      @congress = CongressMember.includes(:state).where(party: party)
+                    .where('state LIKE :state', state: "%#{state}%")
+                    .where('full_name ILIKE :name', name: "%#{name}%")
+                    .send(scope).page(page)
+    end
   end
 end
