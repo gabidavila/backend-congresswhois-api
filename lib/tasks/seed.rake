@@ -192,11 +192,11 @@ namespace :seed do
     filename = File.join(Rails.root, 'db', 'import', 'zipcodes_list.csv')
     states   = get_states
     CSV.foreach(filename, headers: true, header_converters: :symbol) do |row|
+      district = row[:cd] == '0' ? 'At-Large' : row[:cd]
       zipcode_district = {
-
         state:    states[row[:state_abbr]],
         zipcode:  row[:zip],
-        district: row[:cd]
+        district: district
       }
       ZipcodesDistrict.create(zipcode_district)
     end
