@@ -1,10 +1,5 @@
 require 'csv'
 
-def get_states
-  all = State.all
-  all.map { |state| [state.state, state] }.to_h
-end
-
 namespace :seed do
   desc 'Import States'
   task _01_import_us_states: :environment do
@@ -24,7 +19,7 @@ namespace :seed do
   desc 'Initial Import for the Senate'
   task _02_initial_import_members_senate: :environment do
     puts '---- Importing Members from Senate'
-    states = get_states
+    states = State.get_hashed_states
     members = ProPublica::Congress::Senate.members
     imported = members.map do |member|
       data = {
@@ -52,7 +47,7 @@ namespace :seed do
   desc 'Initial Import for the House'
   task _03_initial_import_members_house: :environment do
     puts '---- Importing Members from House'
-    states = get_states
+    states = State.get_hashed_states
     members = ProPublica::Congress::House.members
     imported = members.map do |member|
       data = {
@@ -124,7 +119,7 @@ namespace :seed do
   task _06_import_us_cities: :environment do
     puts '---- Importing Cities'
 
-    states   = get_states
+    states   = State.get_hashed_states
     filename = File.join(Rails.root, 'db', 'import', 'us_cities_states_counties.csv')
     # cities   = []
     # binding.pry
@@ -147,7 +142,7 @@ namespace :seed do
   task _07_import_us_zipcodes: :environment do
     puts '---- Importing zipcodes'
 
-    states   = get_states
+    states   = State.get_hashed_states
     filename = File.join(Rails.root, 'db', 'import', 'us_zipcodes_data.csv')
     zipcodes = []
 
@@ -190,7 +185,7 @@ namespace :seed do
   task _09_import_districts: :environment do
     puts '---- Importing Districts'
     filename = File.join(Rails.root, 'db', 'import', 'zipcodes_list.csv')
-    states   = get_states
+    states   = State.get_hashed_states
     CSV.foreach(filename, headers: true, header_converters: :symbol) do |row|
       district = row[:cd] == '0' ? 'At-Large' : row[:cd]
       zipcode_district = {
