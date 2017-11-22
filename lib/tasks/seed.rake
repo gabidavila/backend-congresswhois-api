@@ -93,7 +93,7 @@ namespace :seed do
   task _05_twitter_image_profile_congressman: :environment do
     puts '---- Importing Twitter accounts profile'
 
-    congressmen       = CongressMember.where.not(twitter_handle: nil).where(twitter_picture_url: nil)
+    congressmen       = CongressMember.where.not(twitter_handle: nil)
     propublica_config = Rails.application.config.propublica
     client            = Twitter::REST::Client.new do |config|
       config.consumer_key        = propublica_config[:twitter][:consumer_key]
