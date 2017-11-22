@@ -6,7 +6,6 @@ namespace :routines do
     Rake::Task['seed:_04_add_full_name_to_congress_members'].invoke
     Rake::Task['seed:_05_twitter_image_profile_congressman'].invoke
     Rake::Task['seed:_08_import_members_profiles'].invoke
-    Rake::Task['seed:_09_import_districts'].invoke
     Rake::Task['seed:_10_update_district_house'].invoke
   end
 end
