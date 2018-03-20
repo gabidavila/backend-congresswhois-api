@@ -108,7 +108,7 @@ namespace :seed do
         user      = client.user(congressman[:twitter_handle])
         image_url = user.profile_image_uri.to_s.gsub('_normal', '')
         congressman.update(twitter_picture_url: image_url)
-      rescue Twitter::Error::NotFound => e
+      rescue Twitter::Error => e
         puts e
       end
     end
