@@ -10,6 +10,7 @@ Rails.application.routes.draw do
         get '/members/:id', to: 'members#show'
         get '/members', to: 'members#index'
         post '/compare', to: 'comparisons#compare'
+        get '/bills', to: 'bills#index'
       end
       namespace :zipcodes do
         get '/districts/search', to: 'districts#search'
