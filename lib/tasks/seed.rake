@@ -24,6 +24,7 @@ namespace :seed do
     imported = members.map do |member|
       data = {
         congress_type:        'senate',
+        congress:             ENV['PROPUBLICA_CURRENT_SENATE'],
         first_name:           member['first_name'],
         middle_name:          member['middle_name'],
         last_name:            member['last_name'],
@@ -52,6 +53,7 @@ namespace :seed do
     imported = members.map do |member|
       data = {
         congress_type:        'house',
+        congress:             ENV['PROPUBLICA_CURRENT_HOUSE'],
         first_name:           member['first_name'],
         middle_name:          member['middle_name'],
         last_name:            member['last_name'],
