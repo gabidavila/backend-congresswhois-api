@@ -17,6 +17,13 @@ module ProPublica
       JSON.parse(RestClient::Request.execute(rest_options).body)
     end
 
+    class Bills
+      def self.recent(offset = 0)
+        url = "#{Congress.base_url}/#{Congress.current}/both/bills/introduced.json?offset=#{offset}"
+        Congress.fetch(url)
+      end
+    end
+
     class Member
       def self.fetch(id)
         member = CongressMember.find_by(id: id)
