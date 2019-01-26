@@ -33,7 +33,7 @@ class Api::V1::Congress::MembersController < ApplicationController
 
     name  ||= params[:name]
     state ||= params[:state]
-    scope = params[:congress] if params[:congress] && params[:congress] != ''
+    congress = params[:congress] if params[:congress] && params[:congress] != ''
 
     if state == 'A'
       state = nil
