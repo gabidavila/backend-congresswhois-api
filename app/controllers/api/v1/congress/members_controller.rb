@@ -10,11 +10,11 @@ class Api::V1::Congress::MembersController < ApplicationController
   end
 
   def senate
-    render json: fetch('senate')
+    render json: fetch('senate', 'PROPUBLICA_CURRENT_SENATE')
   end
 
   def house
-    render json: fetch('house')
+    render json: fetch('house', 'PROPUBLICA_CURRENT_HOUSE')
   end
 
   def show
@@ -24,7 +24,7 @@ class Api::V1::Congress::MembersController < ApplicationController
 
   private
 
-  def fetch(scope = 'order_lastname')
+  def fetch(scope = 'order_lastname', congress)
     page = params[:page] || 1
     page = page['number'] if !page.class != String
 
@@ -42,11 +42,13 @@ class Api::V1::Congress::MembersController < ApplicationController
     if params[:paginated] == 'false'
       @congress = CongressMember.includes(:state).where(party: party)
                     .where('state LIKE :state', state: "%#{state}%")
+                    .where('congress', ENV[congress])
                     .where('full_name ILIKE :name', name: "%#{name}%")
                     .send(scope)
     else
       @congress = CongressMember.includes(:state).where(party: party)
                     .where('state LIKE :state', state: "%#{state}%")
+                    .where('congress', ENV[congress])
                     .where('full_name ILIKE :name', name: "%#{name}%")
                     .send(scope).page(page)
     end
