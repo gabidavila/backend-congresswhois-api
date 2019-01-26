@@ -42,13 +42,13 @@ class Api::V1::Congress::MembersController < ApplicationController
     if params[:paginated] == 'false'
       @congress = CongressMember.includes(:state).where(party: party)
                     .where('state LIKE :state', state: "%#{state}%")
-                    .where('congress', ENV[congress])
+                    .where(congress: ENV[congress])
                     .where('full_name ILIKE :name', name: "%#{name}%")
                     .send(scope)
     else
       @congress = CongressMember.includes(:state).where(party: party)
                     .where('state LIKE :state', state: "%#{state}%")
-                    .where('congress', ENV[congress])
+                    .where(congress: ENV[congress])
                     .where('full_name ILIKE :name', name: "%#{name}%")
                     .send(scope).page(page)
     end
