@@ -24,7 +24,7 @@ class Api::V1::Congress::MembersController < ApplicationController
 
   private
 
-  def fetch(scope = 'order_lastname', congress)
+  def fetch(scope = 'order_lastname', congress = 116)
     page = params[:page] || 1
     page = page['number'] if !page.class != String
 
