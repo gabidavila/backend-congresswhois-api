@@ -31,8 +31,10 @@ class Api::V1::Congress::MembersController < ApplicationController
     party = params[:party]
     party = %w{R D ID I} if !params[:party] || params[:party] == 'A'
 
-    name  ||= params[:name]
+    name ||= params[:name]
     state ||= params[:state]
+
+    congress_number = params[:congress_number] || ProPublica::Congress.current
     congress_type = params[:congress] if params[:congress] && params[:congress] != ''
 
     if state == 'A'
@@ -41,16 +43,18 @@ class Api::V1::Congress::MembersController < ApplicationController
 
     if params[:paginated] == 'false'
       @congress = CongressMember.includes(:state).where(party: party)
-                    .where('state LIKE :state', state: "%#{state}%")
-                    .where('congress_type LIKE :congress', congress: "%#{congress_type}%")
-                    .where('full_name ILIKE :name', name: "%#{name}%")
-                    .send(scope)
+                      .where('state LIKE :state', state: "%#{state}%")
+                      .where('congress_type LIKE :congress', congress: "%#{congress_type}%")
+                      .where('full_name ILIKE :name', name: "%#{name}%")
+                      .where(congress: congress_number)
+                      .send(scope)
     else
       @congress = CongressMember.includes(:state).where(party: party)
-                    .where('state LIKE :state', state: "%#{state}%")
-                    .where('congress_type LIKE :congress', congress: "%#{congress_type}%")
-                    .where('full_name ILIKE :name', name: "%#{name}%")
-                    .send(scope).page(page)
+                      .where('state LIKE :state', state: "%#{state}%")
+                      .where('congress_type LIKE :congress', congress: "%#{congress_type}%")
+                      .where('full_name ILIKE :name', name: "%#{name}%")
+                      .where(congress: congress_number)
+                      .send(scope).page(page)
     end
   end
 end

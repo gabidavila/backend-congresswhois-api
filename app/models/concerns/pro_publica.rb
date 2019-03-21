@@ -40,15 +40,17 @@ module ProPublica
     end
 
     class Senate
-      def self.members
-        url = "#{Congress.base_url}/#{Congress.current}/senate/members.json"
+      def self.members(congress_number)
+        congress_number = congress_number || Congress.current
+        url = "#{Congress.base_url}/#{congress_number}/senate/members.json"
         Congress.fetch(url)['results'].first['members']
       end
     end
 
     class House
-      def self.members
-        url = "#{Congress.base_url}/#{Congress.current}/house/members.json"
+      def self.members(congress_number)
+        congress_number = congress_number || Congress.current
+        url = "#{Congress.base_url}/#{congress_number}/house/members.json"
         Congress.fetch(url)['results'].first['members']
       end
     end

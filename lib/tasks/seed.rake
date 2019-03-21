@@ -17,14 +17,18 @@ namespace :seed do
   end
 
   desc 'Initial Import for the Senate'
-  task _02_initial_import_members_senate: :environment do
+  task :_02_initial_import_members_senate, [:congress_number] => [:environment] do |t, args|
+    congress_number = args[:congress_number] || Rails.application.config.propublica[:congress][:current_senate]
+
     puts '---- Importing Members from Senate'
+
     states = State.get_hashed_states
-    members = ProPublica::Congress::Senate.members
+    members = ProPublica::Congress::Senate.members(congress_number)
+
     imported = members.map do |member|
       data = {
         congress_type:        'senate',
-        congress:             ENV['PROPUBLICA_CURRENT_SENATE'],
+        congress:             congress_number,
         first_name:           member['first_name'],
         middle_name:          member['middle_name'],
         last_name:            member['last_name'],
@@ -35,25 +39,29 @@ namespace :seed do
         general_response_api: member
       }
 
-      CongressMember.find_or_create_by(pp_member_id: member['id']) do |member|
+      CongressMember.find_or_create_by(pp_member_id: member['id'], congress: congress_number) do |member|
         member.update_attributes(data)
       end
     end
 
     # Deletes inactive senators
-    CongressMember.where.not(pp_member_id: imported.pluck(:pp_member_id)).where(congress_type: 'senate').destroy_all
+    CongressMember.where.not(pp_member_id: imported.pluck(:pp_member_id)).where(congress_type: 'senate').where(congress: congress_number).destroy_all
     puts 'Imported Members from Senate'
   end
 
   desc 'Initial Import for the House'
-  task _03_initial_import_members_house: :environment do
+  task :_03_initial_import_members_house,[:congress_number] => :environment do |t, args|
+    congress_number = args[:congress_number] || Rails.application.config.propublica[:congress][:current_senate]
+
     puts '---- Importing Members from House'
+
     states = State.get_hashed_states
-    members = ProPublica::Congress::House.members
+    members = ProPublica::Congress::House.members(congress_number)
+
     imported = members.map do |member|
       data = {
         congress_type:        'house',
-        congress:             ENV['PROPUBLICA_CURRENT_HOUSE'],
+        congress:             congress_number,
         first_name:           member['first_name'],
         middle_name:          member['middle_name'],
         last_name:            member['last_name'],
@@ -64,13 +72,13 @@ namespace :seed do
         general_response_api: member
       }
 
-      CongressMember.find_or_create_by(pp_member_id: member['id']) do |member|
+      CongressMember.find_or_create_by(pp_member_id: member['id'], congress: congress_number) do |member|
         member.update_attributes(data)
       end
     end
 
     # Deletes inactive representatives
-    CongressMember.where.not(pp_member_id: imported.pluck(:pp_member_id)).where(congress_type: 'house').destroy_all
+    CongressMember.where.not(pp_member_id: imported.pluck(:pp_member_id)).where(congress_type: 'house').where(congress: congress_number).destroy_all
     puts 'Imported Members from House'
   end
 
