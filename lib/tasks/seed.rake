@@ -215,4 +215,30 @@ namespace :seed do
       member.update(district: member['general_response_api']['district'])
     end
   end
+
+  desc 'Twitter Image Import per Congress'
+  task :_11_twitter_image_profile_congress_number,[:congress_number] => [:environment] do |t, args|
+    puts '---- Importing Twitter accounts profile'
+
+    congressmen       = CongressMember.where.not(twitter_handle: nil, congress: args[:congress_number])
+    propublica_config = Rails.application.config.propublica
+    client            = Twitter::REST::Client.new do |config|
+      config.consumer_key        = propublica_config[:twitter][:consumer_key]
+      config.consumer_secret     = propublica_config[:twitter][:consumer_secret]
+      config.access_token        = propublica_config[:twitter][:access_token]
+      config.access_token_secret = propublica_config[:twitter][:access_token_secret]
+    end
+    congressmen.each do |congressman|
+      puts "Importing #{congressman[:full_name]} | #{congressman[:twitter_handle]}"
+
+      begin
+        user      = client.user(congressman[:twitter_handle])
+        image_url = user.profile_image_uri.to_s.gsub('_normal', '')
+        congressman.update(twitter_picture_url: image_url)
+      rescue Twitter::Error => e
+        puts e
+      end
+    end
+    puts 'Imported Twitter accounts'
+  end
 end
