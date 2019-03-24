@@ -42,14 +42,14 @@ class Api::V1::Congress::MembersController < ApplicationController
     end
 
     if params[:paginated] == 'false'
-      @congress = CongressMember.includes(:state).where(party: party)
+      @congress = CongressMember.includes(:state).includes(:metadata).where(party: party)
                       .where('state LIKE :state', state: "%#{state}%")
                       .where('congress_type LIKE :congress', congress: "%#{congress_type}%")
                       .where('full_name ILIKE :name', name: "%#{name}%")
                       .where(congress: congress_number)
                       .send(scope)
     else
-      @congress = CongressMember.includes(:state).where(party: party)
+      @congress = CongressMember.includes(:state).includes(:metadata).where(party: party)
                       .where('state LIKE :state', state: "%#{state}%")
                       .where('congress_type LIKE :congress', congress: "%#{congress_type}%")
                       .where('full_name ILIKE :name', name: "%#{name}%")

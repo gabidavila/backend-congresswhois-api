@@ -7,7 +7,7 @@ class CongressMemberSerializer < ActiveModel::Serializer
   end
 
   def career
-    object.member_profile_response_api
+    object.metadata.recent_profile_object
   end
 
   def facebook
@@ -31,5 +31,13 @@ class CongressMemberSerializer < ActiveModel::Serializer
       state:      object.state.state,
       state_full: object.state.state_full
     }
+  end
+
+  def twitter_handle
+    object.metadata[:twitter_handle]
+  end
+
+  def twitter_picture_url
+    object.metadata[:twitter_picture_url]
   end
 end
