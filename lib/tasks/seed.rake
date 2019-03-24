@@ -103,7 +103,7 @@ namespace :seed do
   task _05_twitter_image_profile_congressman: :environment do
     puts '---- Importing Twitter accounts profile'
 
-    congressmen       = CongressMember.where.not(twitter_handle: nil)
+    congressmen       = Metadata.includes(:congress_member).where.not(twitter_handle: nil)
     propublica_config = Rails.application.config.propublica
     client            = Twitter::REST::Client.new do |config|
       config.consumer_key        = propublica_config[:twitter][:consumer_key]
@@ -112,7 +112,7 @@ namespace :seed do
       config.access_token_secret = propublica_config[:twitter][:access_token_secret]
     end
     congressmen.each do |congressman|
-      puts "Importing #{congressman[:full_name]} | #{congressman[:twitter_handle]}"
+      puts "Importing #{congressman.congress_member[:full_name]} | #{congressman[:twitter_handle]}"
 
       begin
         user      = client.user(congressman[:twitter_handle])
@@ -180,12 +180,12 @@ namespace :seed do
   desc 'Import Members Profiles'
   task _08_import_members_profiles: :environment do
     puts '---- Importing Members API Response'
-    members = CongressMember.all
+    members = Metadata.includes(:congress_member).all
     members.each do |member|
-      puts "Importing #{member[:full_name]}"
+      puts "Importing #{member.congress_member[:full_name]}"
 
-      member_response_api                = ProPublica::Congress::Member.fetch(member.id)
-      member.member_profile_response_api = member_response_api['results'].first
+      member_response_api            = ProPublica::Congress::Member.fetch_by_pp_member_id(member.pp_member_id)
+      member.recent_profile_object   = member_response_api['results'].first
       member.save
     end
     puts 'Imported Members API Response'
@@ -214,31 +214,5 @@ namespace :seed do
     CongressMember.house.map do |member|
       member.update(district: member['general_response_api']['district'])
     end
-  end
-
-  desc 'Twitter Image Import per Congress'
-  task :_11_twitter_image_profile_congress_number,[:congress_number] => [:environment] do |t, args|
-    puts '---- Importing Twitter accounts profile'
-
-    congressmen       = CongressMember.where.not(twitter_handle: nil, congress: args[:congress_number])
-    propublica_config = Rails.application.config.propublica
-    client            = Twitter::REST::Client.new do |config|
-      config.consumer_key        = propublica_config[:twitter][:consumer_key]
-      config.consumer_secret     = propublica_config[:twitter][:consumer_secret]
-      config.access_token        = propublica_config[:twitter][:access_token]
-      config.access_token_secret = propublica_config[:twitter][:access_token_secret]
-    end
-    congressmen.each do |congressman|
-      puts "Importing #{congressman[:full_name]} | #{congressman[:twitter_handle]}"
-
-      begin
-        user      = client.user(congressman[:twitter_handle])
-        image_url = user.profile_image_uri.to_s.gsub('_normal', '')
-        congressman.update(twitter_picture_url: image_url)
-      rescue Twitter::Error => e
-        puts e
-      end
-    end
-    puts 'Imported Twitter accounts'
   end
 end

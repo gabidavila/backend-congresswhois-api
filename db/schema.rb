@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171016195236) do
+ActiveRecord::Schema.define(version: 20190324131835) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,12 +31,9 @@ ActiveRecord::Schema.define(version: 20171016195236) do
     t.string "middle_name"
     t.string "last_name", null: false
     t.string "pp_member_id", null: false
-    t.string "twitter_handle"
-    t.text "twitter_picture_url"
     t.string "party", null: false
     t.string "state", null: false
     t.jsonb "general_response_api", default: {}
-    t.jsonb "member_profile_response_api", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "full_name"
@@ -46,6 +43,16 @@ ActiveRecord::Schema.define(version: 20171016195236) do
     t.index ["full_name"], name: "index_congress_members_on_full_name"
     t.index ["party"], name: "index_congress_members_on_party"
     t.index ["state"], name: "index_congress_members_on_state"
+  end
+
+  create_table "metadata", force: :cascade do |t|
+    t.string "pp_member_id", null: false
+    t.string "twitter_handle"
+    t.text "twitter_picture_url"
+    t.jsonb "recent_profile_object", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pp_member_id"], name: "index_metadata_on_pp_member_id", unique: true
   end
 
   create_table "states", force: :cascade do |t|
