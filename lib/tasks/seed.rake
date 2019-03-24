@@ -33,24 +33,31 @@ namespace :seed do
         middle_name:          member['middle_name'],
         last_name:            member['last_name'],
         pp_member_id:         member['id'],
-        twitter_handle:       member['twitter_account'],
         party:                member['party'],
         state:                states[member['state']],
         general_response_api: member
       }
 
+      metadata = { pp_member_id: member['id'], twitter_handle: member['twitter_account'] }
+
       CongressMember.find_or_create_by(pp_member_id: member['id'], congress: congress_number) do |member|
         member.update_attributes(data)
+      end
+
+      Metadata.find_or_create_by(pp_member_id: member['id']) do |meta|
+        meta.update_attributes(metadata)
       end
     end
 
     # Deletes inactive senators
-    CongressMember.where.not(pp_member_id: imported.pluck(:pp_member_id)).where(congress_type: 'senate').where(congress: congress_number).destroy_all
+    CongressMember.where.not(pp_member_id: imported.pluck(:pp_member_id))
+        .where(congress_type: 'senate')
+        .where(congress: congress_number).destroy_all
     puts 'Imported Members from Senate'
   end
 
   desc 'Initial Import for the House'
-  task :_03_initial_import_members_house,[:congress_number] => :environment do |t, args|
+  task :_03_initial_import_members_house, [:congress_number] => :environment do |t, args|
     congress_number = args[:congress_number] || Rails.application.config.propublica[:congress][:current_senate]
 
     puts '---- Importing Members from House'
@@ -66,19 +73,26 @@ namespace :seed do
         middle_name:          member['middle_name'],
         last_name:            member['last_name'],
         pp_member_id:         member['id'],
-        twitter_handle:       member['twitter_account'],
         party:                member['party'],
         state:                states[member['state']],
         general_response_api: member
       }
 
+      metadata = { pp_member_id: member['id'], twitter_handle: member['twitter_account'] }
+
       CongressMember.find_or_create_by(pp_member_id: member['id'], congress: congress_number) do |member|
         member.update_attributes(data)
+      end
+
+      Metadata.find_or_create_by(pp_member_id: member['id']) do |meta|
+        meta.update_attributes(metadata)
       end
     end
 
     # Deletes inactive representatives
-    CongressMember.where.not(pp_member_id: imported.pluck(:pp_member_id)).where(congress_type: 'house').where(congress: congress_number).destroy_all
+    CongressMember.where.not(pp_member_id: imported.pluck(:pp_member_id))
+        .where(congress_type: 'house')
+        .where(congress: congress_number).destroy_all
     puts 'Imported Members from House'
   end
 

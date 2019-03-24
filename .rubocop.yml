@@ -47,10 +47,6 @@ Layout/EmptyLinesAroundModuleBody:
 Layout/FirstParameterIndentation:
   Enabled: true
 
-# Use Ruby >= 1.9 syntax for hashes. Prefer { a: :b } over { :a => :b }.
-Style/HashSyntax:
-  Enabled: true
-
 # Two spaces, no tabs (for indentation).
 Layout/IndentationWidth:
   Enabled: true
@@ -78,7 +74,7 @@ Style/MethodDefParentheses:
   Enabled: true
 
 Style/FrozenStringLiteralComment:
-  Enabled: true
+  Enabled: false
   EnforcedStyle: always
 
 # Use `foo {}` not `foo{}`.
@@ -119,7 +115,7 @@ Style/UnneededPercentQ:
 
 # Align `end` with the matching keyword or starting expression except for
 # assignments, where it should be aligned with the LHS.
-Lint/EndAlignment:
+Layout/EndAlignment:
   Enabled: true
   EnforcedStyleAlignWith: variable
 
@@ -132,18 +128,15 @@ Metrics/LineLength:
   Max: 120
 
 # Most readable form.
-Style/AlignHash:
+Layout/AlignHash:
   EnforcedHashRocketStyle: table
   EnforcedColonStyle: table
 
 # Mixing the styles looks just silly.
 Style/HashSyntax:
+  Enabled: true
   EnforcedStyle: ruby19_no_mixed_keys
 
 # Check with yard instead.
 Style/Documentation:
-  Enabled: false
-
-# Magic comment
-Style/FrozenStringLiteralComment:
   Enabled: false
