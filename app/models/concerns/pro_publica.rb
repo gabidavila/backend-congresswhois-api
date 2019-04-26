@@ -27,13 +27,13 @@ module ProPublica
     class Member
       def self.fetch(id)
         congress_member = CongressMember.find_by(id: id)
-        url = congress_member.general_response_api["api_uri"]
+        url = congress_member.general_response_api['api_uri']
         Congress.fetch(url)
       end
 
       def self.fetch_by_pp_member_id(pp_member_id)
         congress_member = CongressMember.find_by(pp_member_id: pp_member_id)
-        url = congress_member.general_response_api["api_uri"]
+        url = congress_member.general_response_api['api_uri']
         Congress.fetch(url)
       end
     end
