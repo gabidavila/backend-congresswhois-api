@@ -24,4 +24,4 @@ The Twilio API can be found on your [Twilio Console](https://www.twilio.com/cons
 
 ## License
 
-MIT - See [LICENSE.md](LICENSE).
+MIT - See [LICENSE.md](LICENSE.md).

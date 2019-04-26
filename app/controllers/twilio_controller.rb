@@ -2,7 +2,7 @@ class TwilioController < ApplicationController
   def voice
     twiml = Twilio::TwiML::VoiceResponse.new do |r|
       congress_member = CongressMember.where("general_response_api ->> 'phone' =  ?", params['To'])
-      return r.say("Invalid Call") if congress_member.empty?
+      return r.say('Invalid Call') if congress_member.empty?
 
       congress_member = congress_member.first
       r.say("Calling #{params['Member']} from the #{params['Chamber']}, please wait.", voice: 'woman', language: 'en')
@@ -38,5 +38,4 @@ class TwilioController < ApplicationController
 
     render json: result
   end
-
 end

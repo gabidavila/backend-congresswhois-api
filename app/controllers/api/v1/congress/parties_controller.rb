@@ -1,11 +1,11 @@
 class Api::V1::Congress::PartiesController < ApplicationController
   def representation
-    house_representation = ProPublica::Congress::Parties.state_representation['house']
+    house_representation  = ProPublica::Congress::Parties.state_representation['house']
     representation        = State.order(:state).pluck(:state).map do |state|
       parties = house_representation.find do |state_parties|
         state == state_parties.keys.first
       end
-      sorted  = parties[state].sort_by do |object|
+      sorted = parties[state].sort_by do |object|
         object.values.first.to_i
       end if parties
       { name: state, main_party: sorted.last.keys.first, party_count: sorted } if parties
