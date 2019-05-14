@@ -22,6 +22,11 @@ module ProPublica
         url = "#{Congress.base_url}/#{Congress.current}/both/bills/introduced.json?offset=#{offset}"
         Congress.fetch(url)
       end
+
+      def self.item(bill_id, congress_id)
+        url = "#{Congress.base_url}/#{congress_id}/bills/#{bill_id}.json"
+        Congress.fetch(url)
+      end
     end
 
     class Member
